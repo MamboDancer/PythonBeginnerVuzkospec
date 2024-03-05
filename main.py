@@ -2,6 +2,10 @@ import time
 import gevent
 import zerorpc
 from tkinter import *
+import socket
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+print("Your Computer IP Address is:" + IPAddr)
 
 
 class Server:
@@ -34,11 +38,11 @@ class Client:
         self.game_window = root
 
     def connect(self, room_id):
-        self.client.connect(f"tcp://127.0.0.1:{room_id}")
+        self.client.connect(f"tcp://{input('input friend ip: ')}:{room_id}")
 
     def start_server_room(self, room_id, server):
         s = zerorpc.Server(server)
-        s.bind(f"tcp://0.0.0.0:{room_id}")
+        s.bind(f"tcp://{IPAddr}:{room_id}")
         print("Server running")
         self.is_host = True
         gevent.spawn(s.run)
@@ -132,6 +136,11 @@ class Game:
 
     def run(self):
         self.root.mainloop()
+
+
+# Python Program to Get IP Address
+
+
 
 
 Game().run()
