@@ -1,8 +1,8 @@
 import gevent
 import zerorpc
+from tkinter import *
 
-
-class Client:
+class GameClient:
     client = zerorpc.Client(timeout=2)
     is_host = False
     game_window = None
@@ -21,19 +21,24 @@ class Client:
         self.is_host = True
         gevent.spawn(s.run)
 
-    def make_move(self, value):
+    def make_move(self, value):#
         self.client.rpc_make_move(value, self.is_host)
 
-    def refresh_board(self):
-        self.board = self.client.rpc_get_board()
+    def refresh_board(self):#
+        self.board, winner = self.client.rpc_get_board()
         self.set_points()
+        if winner != -1:
+            t = Toplevel(self.game_window)
+            Label(t, text=f"Winner is {'X' if winner else 'O'}").pack()
+            return 0
         self.game_window.after(100, self.refresh_board)
 
-    def set_points(self):
+    def set_points(self):#
+        marks = {
+            0: "O",
+            1: "X",
+            -1: " "
+        }
         for i in range(len(self.board)):
-            mark = " "
-            if self.board[i] == 0:
-                mark = "O"
-            if self.board[i] == 1:
-                mark = "X"
+            mark = marks.get(self.board[i])
             self.game_buttons[i].config(text=mark)

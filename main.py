@@ -1,16 +1,16 @@
-from client import Client
-from server import Server
+from client import GameClient
+from server import GameServer
 from tkinter import *
 import socket
 
 
 class Game:
     root = Tk()
-    game_widgets = []#
+    game_widgets = []
     ip = None
     port = None
-    server = Server()#
-    user_client = Client(root)#
+    server = GameServer()
+    user_client = GameClient(root)
 
     def __init__(self):
         self.root.geometry("440x480")
@@ -19,7 +19,7 @@ class Game:
         hostname = socket.gethostname()
         self.client_ip = socket.gethostbyname(hostname)
         self.init_start_window()
-        self.init_game()  #
+        self.init_game()
 
     def init_start_window(self):
         self.entry_toplevel = Toplevel(self.root)
@@ -54,16 +54,16 @@ class Game:
         self.ip = self.ip_entry.get()
         self.port = self.port_entry.get()
         self.user_client.connect(self.ip, self.port)
+        self.show_toplevel("Connected", f"Connected to room {self.port}")
+        self.entry_toplevel.destroy()
         self.user_client.game_buttons = self.game_widgets
         self.user_client.refresh_board()
-        self.show_toplevel("Connected",f"Connected to room {self.port}")
-        self.entry_toplevel.destroy()
 
     def start_server_room(self):
         try:
             self.user_client.start_server_room(self.ip, self.port, self.server)
         except:
-            self.show_toplevel("Error",f"Could not start server on port {self.port}")
+            self.show_toplevel("Error", f"Could not start server on port {self.port}")
 
     def show_toplevel(self, title, text):
         message = Toplevel(self.root)
