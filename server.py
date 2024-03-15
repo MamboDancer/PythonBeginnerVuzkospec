@@ -3,16 +3,21 @@ class GameServer:
     active_player = True
 
     def rpc_get_board(self):
-        return self.game_board, self.check_winner()
+        winner = self.check_winner()
+        return self.game_board, winner
 
-    def rpc_make_move(self, move_index, player): #
-        if player == self.active_player and self.game_board[move_index] == -1:
-            self.game_board[move_index] = int(self.active_player)
-            if self.active_player:
-                self.active_player = False
+    def rpc_get_active_player(self):
+        return self.active_player
+
+    def rpc_make_move(self, move_index, player):
+        if player == self.active_player:
+            if self.game_board[move_index] == -1:
+                self.game_board[move_index] = int(self.active_player)
+                self.active_player = not self.active_player
+                return 1
             else:
-                self.active_player = True
-        return -1
+                return -1
+        return 0
 
     def check_winner(self):
         for i in range(3):
@@ -25,4 +30,11 @@ class GameServer:
             return self.game_board[0]
         if self.game_board[2] == self.game_board[4] == self.game_board[6] != -1:
             return self.game_board[2]
+
+        count = 0
+        for i in range(len(self.game_board)):
+            if self.game_board[i] != -1:
+                count += 1
+        if count == 9:
+            return -2
         return -1

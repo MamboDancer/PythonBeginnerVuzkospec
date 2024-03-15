@@ -25,12 +25,15 @@ class Game:
         self.entry_toplevel = Toplevel(self.root)
         self.ip_entry = Entry(self.entry_toplevel)
         self.port_entry = Entry(self.entry_toplevel)
+        self.name_entry = Entry(self.entry_toplevel)
         Label(self.entry_toplevel, text=f"Your IP-address: {self.client_ip}").pack()
         self.ip_entry.pack()
         self.port_entry.pack()
+        self.name_entry.pack()
         Button(self.entry_toplevel, text="Create Room", command=self.create_room).pack()
         Button(self.entry_toplevel, text="Connect to room", command=self.connect_to_room).pack()
         self.ip_entry.insert(0, self.client_ip)
+        self.name_entry.insert(0, "Username")
 
     def init_game(self):
         i = 0
@@ -55,6 +58,7 @@ class Game:
         self.port = self.port_entry.get()
         self.user_client.connect(self.ip, self.port)
         self.show_toplevel("Connected", f"Connected to room {self.port}")
+        self.user_client.player_name = self.name_entry.get()
         self.entry_toplevel.destroy()
         self.user_client.game_buttons = self.game_widgets
         self.user_client.refresh_board()
